@@ -1,6 +1,6 @@
 /*
  * PassportPDF API
- *       Introduction:    PassportPDF API is a REST API that lets you perform complex operations on documents and images easily.  You may consume the API by using our.NET SDK (other platforms / languages are soon to come), or any REST client by sending your requests to the appropriate endpoints.   A list of all the available endpoints can be found on the API reference page at https://passportpdfapi.com/references/api/index.html        Authentication:    Each available operation has a predefined cost, expressed as a number of tokens.  These tokens are deducted from your \"passport,\" which has a unique identifier that acts as an API key. This key is, therefore, required to be provided with each request for the latter to be honored(except if the operation does not have a cost, typically when you request a simple data with a GET).  Your key must be included in the header of the request, under the name \"X-PassportPdf-API-Key.\"  If you are using the.NET SDK, you can either set your key in the ApiKey property of your API instance(PdfApi or ImageApi, for example) or set it globally in the GlobalConfiguration instance if you want to set it once for the whole life cycle of your application.          Communication with the API:    All the available actions are listed on the API reference page, as previously mentioned.  There are several different controllers, i.e., routes, which categorize the actions.For example, you may use the PDF controller(\"/api/pdf\" route) to perform PDF - related operations, and the Image controller(\"/api/image\") for images.  Each action defines what kind of parameters(if any) is expected, and what kind of response is served.Parameters and responses are represented using data models, or \"schemas,\" and are listed in the \"Schemas\" section of the reference.   Parameters and response models of a given action are both prefixed by the controller name, the action name, and \"Parameters\" / \"Response,\" e.g. \"api/pdf/reduce\" respectively receives and serves a PdfReduceParameters and PdfReduceResponse models.  Using the .NET SDK, you will find the objects to interact with the different controllers in the PassportPDF.Api namespace and all the schemas in the PassportPDF.Model namespace.        Processing documents:    Each document manipulation starts with importing the file onto the API.  The LoadDocument action of the PDF controller lets you import your document as a PDF.  Note that the GetPDFImportSupportedFileExtensions action of the same controller will let you know all the different types of files that you may import as a PDF. LoadDocument responds with a JSON-serialized PdfLoadDocumentResponse model, which contains a \"FileId\" property.This identifier is required for the API to know about your document for further manipulations, hence the presence of a \"FileId\" property in the PdfReduceParameters schema (and many other parameters schemas). To download the changes made to a file, you need, of course, to download the new version of the file from the API.  To save your document as a PDF, you will need to use the SaveDocument action of the PDF controller and provide a PdfSaveDocumentParameters data model that contains the identifier of your file.        Errors:    Conventional HTTP response codes are used to indicate the success or failure of an API request.   The Error data model also defines some information about an error that occurred on the API.   Each response model has an Error in its definition, and its sole existence in the serialized response - which should thus always be checked - indicates that something went wrong.  Among the information given by the Error schema, \"ResultCode\" specifies a value of the \"PassportPDFStatus\" enumeration, that defines a first level of error information. \"InternalErrorId\" defines a unique identifier for the error, which comes very handy for us to troubleshoot any issue you may encounter quickly.        Efficiency considerations:    Multipart upload/download is available and lets you directly stream a file to/from the API.  In the PDF controller, LoadDocument/LoadDocumentMultipart and SaveDocument/SaveDocumentToFile may be used to upload/download a document using respectively binary data serialization and streaming multipart HTTP requests.  The second approach should be favored when dealing with large files, as it will be much more efficient in that context.  
+ * Another brick in the cloud
  *
  * The version of the OpenAPI document: 1.0.1
  * 
@@ -86,6 +86,8 @@ import org.openapitools.client.model.PdfReduceParameters;
 import org.openapitools.client.model.PdfReduceResponse;
 import org.openapitools.client.model.PdfRemovePageFormFieldsParameters;
 import org.openapitools.client.model.PdfRemovePageFormFieldsResponse;
+import org.openapitools.client.model.PdfRemoveTextParameters;
+import org.openapitools.client.model.PdfRemoveTextResponse;
 import org.openapitools.client.model.PdfReorderPagesParameters;
 import org.openapitools.client.model.PdfReorderPagesResponse;
 import org.openapitools.client.model.PdfRepairDocumentParameters;
@@ -3560,6 +3562,116 @@ public class PdfApi {
         return localVarCall;
     }
     /**
+     * Build call for removeText
+     * @param pdfRemoveTextParameters A PdfRemoveTextParameters object specifying the parameters of the action. (required)
+     * @param _callback Callback for upload/download progress
+     * @return Call to execute
+     * @throws ApiException If fail to serialize the request body object
+     * @http.response.details
+     <table summary="Response Details" border="1">
+        <tr><td> Status Code </td><td> Description </td><td> Response Headers </td></tr>
+        <tr><td> 200 </td><td> Success </td><td>  -  </td></tr>
+     </table>
+     */
+    public okhttp3.Call removeTextCall(PdfRemoveTextParameters pdfRemoveTextParameters, final ApiCallback _callback) throws ApiException {
+        Object localVarPostBody = pdfRemoveTextParameters;
+
+        // create path and map variables
+        String localVarPath = "/api/pdf/RemoveText";
+
+        List<Pair> localVarQueryParams = new ArrayList<Pair>();
+        List<Pair> localVarCollectionQueryParams = new ArrayList<Pair>();
+        Map<String, String> localVarHeaderParams = new HashMap<String, String>();
+        Map<String, String> localVarCookieParams = new HashMap<String, String>();
+        Map<String, Object> localVarFormParams = new HashMap<String, Object>();
+        final String[] localVarAccepts = {
+            "text/plain", "application/json", "text/json"
+        };
+        final String localVarAccept = localVarApiClient.selectHeaderAccept(localVarAccepts);
+        if (localVarAccept != null) {
+            localVarHeaderParams.put("Accept", localVarAccept);
+        }
+
+        final String[] localVarContentTypes = {
+            "application/json-patch+json", "application/json", "text/json", "application/_*+json"
+        };
+        final String localVarContentType = localVarApiClient.selectHeaderContentType(localVarContentTypes);
+        localVarHeaderParams.put("Content-Type", localVarContentType);
+
+        String[] localVarAuthNames = new String[] {  };
+        return localVarApiClient.buildCall(localVarPath, "POST", localVarQueryParams, localVarCollectionQueryParams, localVarPostBody, localVarHeaderParams, localVarCookieParams, localVarFormParams, localVarAuthNames, _callback);
+    }
+
+    @SuppressWarnings("rawtypes")
+    private okhttp3.Call removeTextValidateBeforeCall(PdfRemoveTextParameters pdfRemoveTextParameters, final ApiCallback _callback) throws ApiException {
+        
+        // verify the required parameter 'pdfRemoveTextParameters' is set
+        if (pdfRemoveTextParameters == null) {
+            throw new ApiException("Missing the required parameter 'pdfRemoveTextParameters' when calling removeText(Async)");
+        }
+        
+
+        okhttp3.Call localVarCall = removeTextCall(pdfRemoveTextParameters, _callback);
+        return localVarCall;
+
+    }
+
+    /**
+     * Removes text (all text or only invisible one) from a previously uploaded PDF.
+     * 
+     * @param pdfRemoveTextParameters A PdfRemoveTextParameters object specifying the parameters of the action. (required)
+     * @return PdfRemoveTextResponse
+     * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
+     * @http.response.details
+     <table summary="Response Details" border="1">
+        <tr><td> Status Code </td><td> Description </td><td> Response Headers </td></tr>
+        <tr><td> 200 </td><td> Success </td><td>  -  </td></tr>
+     </table>
+     */
+    public PdfRemoveTextResponse removeText(PdfRemoveTextParameters pdfRemoveTextParameters) throws ApiException {
+        ApiResponse<PdfRemoveTextResponse> localVarResp = removeTextWithHttpInfo(pdfRemoveTextParameters);
+        return localVarResp.getData();
+    }
+
+    /**
+     * Removes text (all text or only invisible one) from a previously uploaded PDF.
+     * 
+     * @param pdfRemoveTextParameters A PdfRemoveTextParameters object specifying the parameters of the action. (required)
+     * @return ApiResponse&lt;PdfRemoveTextResponse&gt;
+     * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
+     * @http.response.details
+     <table summary="Response Details" border="1">
+        <tr><td> Status Code </td><td> Description </td><td> Response Headers </td></tr>
+        <tr><td> 200 </td><td> Success </td><td>  -  </td></tr>
+     </table>
+     */
+    public ApiResponse<PdfRemoveTextResponse> removeTextWithHttpInfo(PdfRemoveTextParameters pdfRemoveTextParameters) throws ApiException {
+        okhttp3.Call localVarCall = removeTextValidateBeforeCall(pdfRemoveTextParameters, null);
+        Type localVarReturnType = new TypeToken<PdfRemoveTextResponse>(){}.getType();
+        return localVarApiClient.execute(localVarCall, localVarReturnType);
+    }
+
+    /**
+     * Removes text (all text or only invisible one) from a previously uploaded PDF. (asynchronously)
+     * 
+     * @param pdfRemoveTextParameters A PdfRemoveTextParameters object specifying the parameters of the action. (required)
+     * @param _callback The callback to be executed when the API call finishes
+     * @return The request call
+     * @throws ApiException If fail to process the API call, e.g. serializing the request body object
+     * @http.response.details
+     <table summary="Response Details" border="1">
+        <tr><td> Status Code </td><td> Description </td><td> Response Headers </td></tr>
+        <tr><td> 200 </td><td> Success </td><td>  -  </td></tr>
+     </table>
+     */
+    public okhttp3.Call removeTextAsync(PdfRemoveTextParameters pdfRemoveTextParameters, final ApiCallback<PdfRemoveTextResponse> _callback) throws ApiException {
+
+        okhttp3.Call localVarCall = removeTextValidateBeforeCall(pdfRemoveTextParameters, _callback);
+        Type localVarReturnType = new TypeToken<PdfRemoveTextResponse>(){}.getType();
+        localVarApiClient.executeAsync(localVarCall, localVarReturnType, _callback);
+        return localVarCall;
+    }
+    /**
      * Build call for reorderPages
      * @param pdfReorderPagesParameters A PdfReorderPagesParameters object specifying the parameters of the action. (required)
      * @param _callback Callback for upload/download progress
@@ -3945,7 +4057,7 @@ public class PdfApi {
     }
 
     /**
-     * Saves a previously uploaded document as JPEG.
+     * Saves a previously uploaded document as JPEG, and sends the file data in a JSON-serialized object.
      * 
      * @param pdfSaveAsJPEGParameters A PdfSaveAsJPEGParameters object specifying the parameters of the action. (required)
      * @return PdfSaveAsJPEGResponse
@@ -3962,7 +4074,7 @@ public class PdfApi {
     }
 
     /**
-     * Saves a previously uploaded document as JPEG.
+     * Saves a previously uploaded document as JPEG, and sends the file data in a JSON-serialized object.
      * 
      * @param pdfSaveAsJPEGParameters A PdfSaveAsJPEGParameters object specifying the parameters of the action. (required)
      * @return ApiResponse&lt;PdfSaveAsJPEGResponse&gt;
@@ -3980,7 +4092,7 @@ public class PdfApi {
     }
 
     /**
-     * Saves a previously uploaded document as JPEG. (asynchronously)
+     * Saves a previously uploaded document as JPEG, and sends the file data in a JSON-serialized object. (asynchronously)
      * 
      * @param pdfSaveAsJPEGParameters A PdfSaveAsJPEGParameters object specifying the parameters of the action. (required)
      * @param _callback The callback to be executed when the API call finishes
@@ -4055,7 +4167,7 @@ public class PdfApi {
     }
 
     /**
-     * Saves a previously uploaded document as JPEG.
+     * Saves a previously uploaded document as JPEG, and streams the file binary data to the response (this is the most efficient download method).
      * 
      * @param pdfSaveAsJPEGParameters A PdfSaveAsJPEGParameters object specifying the parameters of the action. (required)
      * @return File
@@ -4072,7 +4184,7 @@ public class PdfApi {
     }
 
     /**
-     * Saves a previously uploaded document as JPEG.
+     * Saves a previously uploaded document as JPEG, and streams the file binary data to the response (this is the most efficient download method).
      * 
      * @param pdfSaveAsJPEGParameters A PdfSaveAsJPEGParameters object specifying the parameters of the action. (required)
      * @return ApiResponse&lt;File&gt;
@@ -4090,7 +4202,7 @@ public class PdfApi {
     }
 
     /**
-     * Saves a previously uploaded document as JPEG. (asynchronously)
+     * Saves a previously uploaded document as JPEG, and streams the file binary data to the response (this is the most efficient download method). (asynchronously)
      * 
      * @param pdfSaveAsJPEGParameters A PdfSaveAsJPEGParameters object specifying the parameters of the action. (required)
      * @param _callback The callback to be executed when the API call finishes
@@ -4165,7 +4277,7 @@ public class PdfApi {
     }
 
     /**
-     * Saves a previously uploaded document as PNG.
+     * Saves a previously uploaded document as PNG, and sends the file data in a JSON-serialized object.
      * 
      * @param pdfSaveAsPNGParameters A PdfSaveAsPNGParameters object specifying the parameters of the action. (required)
      * @return PdfSaveAsPNGResponse
@@ -4182,7 +4294,7 @@ public class PdfApi {
     }
 
     /**
-     * Saves a previously uploaded document as PNG.
+     * Saves a previously uploaded document as PNG, and sends the file data in a JSON-serialized object.
      * 
      * @param pdfSaveAsPNGParameters A PdfSaveAsPNGParameters object specifying the parameters of the action. (required)
      * @return ApiResponse&lt;PdfSaveAsPNGResponse&gt;
@@ -4200,7 +4312,7 @@ public class PdfApi {
     }
 
     /**
-     * Saves a previously uploaded document as PNG. (asynchronously)
+     * Saves a previously uploaded document as PNG, and sends the file data in a JSON-serialized object. (asynchronously)
      * 
      * @param pdfSaveAsPNGParameters A PdfSaveAsPNGParameters object specifying the parameters of the action. (required)
      * @param _callback The callback to be executed when the API call finishes
@@ -4275,7 +4387,7 @@ public class PdfApi {
     }
 
     /**
-     * Saves a previously uploaded document as PNG.
+     * Saves a previously uploaded document as PNG, and streams the file binary data to the response (this is the most efficient download method).
      * 
      * @param pdfSaveAsPNGParameters A PdfSaveAsPNGParameters object specifying the parameters of the action. (required)
      * @return File
@@ -4292,7 +4404,7 @@ public class PdfApi {
     }
 
     /**
-     * Saves a previously uploaded document as PNG.
+     * Saves a previously uploaded document as PNG, and streams the file binary data to the response (this is the most efficient download method).
      * 
      * @param pdfSaveAsPNGParameters A PdfSaveAsPNGParameters object specifying the parameters of the action. (required)
      * @return ApiResponse&lt;File&gt;
@@ -4310,7 +4422,7 @@ public class PdfApi {
     }
 
     /**
-     * Saves a previously uploaded document as PNG. (asynchronously)
+     * Saves a previously uploaded document as PNG, and streams the file binary data to the response (this is the most efficient download method). (asynchronously)
      * 
      * @param pdfSaveAsPNGParameters A PdfSaveAsPNGParameters object specifying the parameters of the action. (required)
      * @param _callback The callback to be executed when the API call finishes
@@ -4385,7 +4497,7 @@ public class PdfApi {
     }
 
     /**
-     * Saves a previously uploaded document as TIFF.
+     * Saves a previously uploaded document as TIFF, and sends the file data in a JSON-serialized object.
      * 
      * @param pdfSaveAsTIFFParameters A PdfSaveAsTIFFParameters object specifying the parameters of the action. (required)
      * @return PdfSaveAsTIFFResponse
@@ -4402,7 +4514,7 @@ public class PdfApi {
     }
 
     /**
-     * Saves a previously uploaded document as TIFF.
+     * Saves a previously uploaded document as TIFF, and sends the file data in a JSON-serialized object.
      * 
      * @param pdfSaveAsTIFFParameters A PdfSaveAsTIFFParameters object specifying the parameters of the action. (required)
      * @return ApiResponse&lt;PdfSaveAsTIFFResponse&gt;
@@ -4420,7 +4532,7 @@ public class PdfApi {
     }
 
     /**
-     * Saves a previously uploaded document as TIFF. (asynchronously)
+     * Saves a previously uploaded document as TIFF, and sends the file data in a JSON-serialized object. (asynchronously)
      * 
      * @param pdfSaveAsTIFFParameters A PdfSaveAsTIFFParameters object specifying the parameters of the action. (required)
      * @param _callback The callback to be executed when the API call finishes
@@ -4495,7 +4607,7 @@ public class PdfApi {
     }
 
     /**
-     * Saves a previously uploaded document as TIFF.
+     * Saves a previously uploaded document as TIFF, and streams the file binary data to the response (this is the most efficient download method).
      * 
      * @param pdfSaveAsTIFFParameters A PdfSaveAsTIFFParameters object specifying the parameters of the action. (required)
      * @return File
@@ -4512,7 +4624,7 @@ public class PdfApi {
     }
 
     /**
-     * Saves a previously uploaded document as TIFF.
+     * Saves a previously uploaded document as TIFF, and streams the file binary data to the response (this is the most efficient download method).
      * 
      * @param pdfSaveAsTIFFParameters A PdfSaveAsTIFFParameters object specifying the parameters of the action. (required)
      * @return ApiResponse&lt;File&gt;
@@ -4530,7 +4642,7 @@ public class PdfApi {
     }
 
     /**
-     * Saves a previously uploaded document as TIFF. (asynchronously)
+     * Saves a previously uploaded document as TIFF, and streams the file binary data to the response (this is the most efficient download method). (asynchronously)
      * 
      * @param pdfSaveAsTIFFParameters A PdfSaveAsTIFFParameters object specifying the parameters of the action. (required)
      * @param _callback The callback to be executed when the API call finishes
@@ -4605,7 +4717,7 @@ public class PdfApi {
     }
 
     /**
-     * Saves a previously uploaded document as multipage TIFF.
+     * Saves a previously uploaded document as multipage TIFF, and sends the file data in a JSON-serialized object.
      * 
      * @param pdfSaveAsTIFFMultipageParameters A PdfSaveAsTIFFMultipageParameters object specifying the parameters of the action. (required)
      * @return PdfSaveAsTIFFMultipageResponse
@@ -4622,7 +4734,7 @@ public class PdfApi {
     }
 
     /**
-     * Saves a previously uploaded document as multipage TIFF.
+     * Saves a previously uploaded document as multipage TIFF, and sends the file data in a JSON-serialized object.
      * 
      * @param pdfSaveAsTIFFMultipageParameters A PdfSaveAsTIFFMultipageParameters object specifying the parameters of the action. (required)
      * @return ApiResponse&lt;PdfSaveAsTIFFMultipageResponse&gt;
@@ -4640,7 +4752,7 @@ public class PdfApi {
     }
 
     /**
-     * Saves a previously uploaded document as multipage TIFF. (asynchronously)
+     * Saves a previously uploaded document as multipage TIFF, and sends the file data in a JSON-serialized object. (asynchronously)
      * 
      * @param pdfSaveAsTIFFMultipageParameters A PdfSaveAsTIFFMultipageParameters object specifying the parameters of the action. (required)
      * @param _callback The callback to be executed when the API call finishes
@@ -4715,7 +4827,7 @@ public class PdfApi {
     }
 
     /**
-     * Saves a previously uploaded document as multipage TIFF.
+     * Saves a previously uploaded document as multipage TIFF, and streams the file binary data to the response (this is the most efficient download method).
      * 
      * @param pdfSaveAsTIFFMultipageParameters A PdfSaveAsTIFFMultipageParameters object specifying the parameters of the action. (required)
      * @return File
@@ -4732,7 +4844,7 @@ public class PdfApi {
     }
 
     /**
-     * Saves a previously uploaded document as multipage TIFF.
+     * Saves a previously uploaded document as multipage TIFF, and streams the file binary data to the response (this is the most efficient download method).
      * 
      * @param pdfSaveAsTIFFMultipageParameters A PdfSaveAsTIFFMultipageParameters object specifying the parameters of the action. (required)
      * @return ApiResponse&lt;File&gt;
@@ -4750,7 +4862,7 @@ public class PdfApi {
     }
 
     /**
-     * Saves a previously uploaded document as multipage TIFF. (asynchronously)
+     * Saves a previously uploaded document as multipage TIFF, and streams the file binary data to the response (this is the most efficient download method). (asynchronously)
      * 
      * @param pdfSaveAsTIFFMultipageParameters A PdfSaveAsTIFFMultipageParameters object specifying the parameters of the action. (required)
      * @param _callback The callback to be executed when the API call finishes
@@ -4825,7 +4937,7 @@ public class PdfApi {
     }
 
     /**
-     * Saves a previously uploaded document as PDF.
+     * Saves a previously uploaded document as PDF, and sends the file data in a JSON-serialized object.
      * 
      * @param pdfSaveDocumentParameters A PdfSaveDocumentParameters object specifying the parameters of the action. (required)
      * @return PdfSaveDocumentResponse
@@ -4842,7 +4954,7 @@ public class PdfApi {
     }
 
     /**
-     * Saves a previously uploaded document as PDF.
+     * Saves a previously uploaded document as PDF, and sends the file data in a JSON-serialized object.
      * 
      * @param pdfSaveDocumentParameters A PdfSaveDocumentParameters object specifying the parameters of the action. (required)
      * @return ApiResponse&lt;PdfSaveDocumentResponse&gt;
@@ -4860,7 +4972,7 @@ public class PdfApi {
     }
 
     /**
-     * Saves a previously uploaded document as PDF. (asynchronously)
+     * Saves a previously uploaded document as PDF, and sends the file data in a JSON-serialized object. (asynchronously)
      * 
      * @param pdfSaveDocumentParameters A PdfSaveDocumentParameters object specifying the parameters of the action. (required)
      * @param _callback The callback to be executed when the API call finishes
@@ -4935,7 +5047,7 @@ public class PdfApi {
     }
 
     /**
-     * Saves a previously uploaded document as PDF.
+     * Saves a previously uploaded document as PDF, and streams the file binary data to the response (this is the most efficient download method).
      * 
      * @param pdfSaveDocumentParameters A PdfSaveDocumentParameters object specifying the parameters of the action. (required)
      * @return File
@@ -4952,7 +5064,7 @@ public class PdfApi {
     }
 
     /**
-     * Saves a previously uploaded document as PDF.
+     * Saves a previously uploaded document as PDF, and streams the file binary data to the response (this is the most efficient download method).
      * 
      * @param pdfSaveDocumentParameters A PdfSaveDocumentParameters object specifying the parameters of the action. (required)
      * @return ApiResponse&lt;File&gt;
@@ -4970,7 +5082,7 @@ public class PdfApi {
     }
 
     /**
-     * Saves a previously uploaded document as PDF. (asynchronously)
+     * Saves a previously uploaded document as PDF, and streams the file binary data to the response (this is the most efficient download method). (asynchronously)
      * 
      * @param pdfSaveDocumentParameters A PdfSaveDocumentParameters object specifying the parameters of the action. (required)
      * @param _callback The callback to be executed when the API call finishes

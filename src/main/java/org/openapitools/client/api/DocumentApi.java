@@ -1,6 +1,6 @@
 /*
  * PassportPDF API
- *       Introduction:    PassportPDF API is a REST API that lets you perform complex operations on documents and images easily.  You may consume the API by using our.NET SDK (other platforms / languages are soon to come), or any REST client by sending your requests to the appropriate endpoints.   A list of all the available endpoints can be found on the API reference page at https://passportpdfapi.com/references/api/index.html        Authentication:    Each available operation has a predefined cost, expressed as a number of tokens.  These tokens are deducted from your \"passport,\" which has a unique identifier that acts as an API key. This key is, therefore, required to be provided with each request for the latter to be honored(except if the operation does not have a cost, typically when you request a simple data with a GET).  Your key must be included in the header of the request, under the name \"X-PassportPdf-API-Key.\"  If you are using the.NET SDK, you can either set your key in the ApiKey property of your API instance(PdfApi or ImageApi, for example) or set it globally in the GlobalConfiguration instance if you want to set it once for the whole life cycle of your application.          Communication with the API:    All the available actions are listed on the API reference page, as previously mentioned.  There are several different controllers, i.e., routes, which categorize the actions.For example, you may use the PDF controller(\"/api/pdf\" route) to perform PDF - related operations, and the Image controller(\"/api/image\") for images.  Each action defines what kind of parameters(if any) is expected, and what kind of response is served.Parameters and responses are represented using data models, or \"schemas,\" and are listed in the \"Schemas\" section of the reference.   Parameters and response models of a given action are both prefixed by the controller name, the action name, and \"Parameters\" / \"Response,\" e.g. \"api/pdf/reduce\" respectively receives and serves a PdfReduceParameters and PdfReduceResponse models.  Using the .NET SDK, you will find the objects to interact with the different controllers in the PassportPDF.Api namespace and all the schemas in the PassportPDF.Model namespace.        Processing documents:    Each document manipulation starts with importing the file onto the API.  The LoadDocument action of the PDF controller lets you import your document as a PDF.  Note that the GetPDFImportSupportedFileExtensions action of the same controller will let you know all the different types of files that you may import as a PDF. LoadDocument responds with a JSON-serialized PdfLoadDocumentResponse model, which contains a \"FileId\" property.This identifier is required for the API to know about your document for further manipulations, hence the presence of a \"FileId\" property in the PdfReduceParameters schema (and many other parameters schemas). To download the changes made to a file, you need, of course, to download the new version of the file from the API.  To save your document as a PDF, you will need to use the SaveDocument action of the PDF controller and provide a PdfSaveDocumentParameters data model that contains the identifier of your file.        Errors:    Conventional HTTP response codes are used to indicate the success or failure of an API request.   The Error data model also defines some information about an error that occurred on the API.   Each response model has an Error in its definition, and its sole existence in the serialized response - which should thus always be checked - indicates that something went wrong.  Among the information given by the Error schema, \"ResultCode\" specifies a value of the \"PassportPDFStatus\" enumeration, that defines a first level of error information. \"InternalErrorId\" defines a unique identifier for the error, which comes very handy for us to troubleshoot any issue you may encounter quickly.        Efficiency considerations:    Multipart upload/download is available and lets you directly stream a file to/from the API.  In the PDF controller, LoadDocument/LoadDocumentMultipart and SaveDocument/SaveDocumentToFile may be used to upload/download a document using respectively binary data serialization and streaming multipart HTTP requests.  The second approach should be favored when dealing with large files, as it will be much more efficient in that context.  
+ * Another brick in the cloud
  *
  * The version of the OpenAPI document: 1.0.1
  * 
@@ -30,7 +30,12 @@ import java.io.IOException;
 import org.openapitools.client.model.DocumentCloseParameters;
 import org.openapitools.client.model.DocumentCloseResponse;
 import org.openapitools.client.model.DocumentGetPreviewResponse;
+import org.openapitools.client.model.DocumentLoadResponse;
+import java.io.File;
 import org.openapitools.client.model.GetDocumentPreviewParameters;
+import org.openapitools.client.model.LoadDocumentFromByteArrayParameters;
+import org.openapitools.client.model.LoadDocumentFromURIParameters;
+import org.openapitools.client.model.LoadDocumentParameters;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -223,7 +228,7 @@ public class DocumentApi {
     }
 
     /**
-     * Gets the format, the page count, and a thumbnail of the provided, or a previously uploaded document.
+     * Gets the format, the page count and a thumbnail of a previously uploaded document.
      * 
      * @param getDocumentPreviewParameters A GetDocumentPreviewParameters object specifying the parameters of the action. (required)
      * @return DocumentGetPreviewResponse
@@ -240,7 +245,7 @@ public class DocumentApi {
     }
 
     /**
-     * Gets the format, the page count, and a thumbnail of the provided, or a previously uploaded document.
+     * Gets the format, the page count and a thumbnail of a previously uploaded document.
      * 
      * @param getDocumentPreviewParameters A GetDocumentPreviewParameters object specifying the parameters of the action. (required)
      * @return ApiResponse&lt;DocumentGetPreviewResponse&gt;
@@ -258,7 +263,7 @@ public class DocumentApi {
     }
 
     /**
-     * Gets the format, the page count, and a thumbnail of the provided, or a previously uploaded document. (asynchronously)
+     * Gets the format, the page count and a thumbnail of a previously uploaded document. (asynchronously)
      * 
      * @param getDocumentPreviewParameters A GetDocumentPreviewParameters object specifying the parameters of the action. (required)
      * @param _callback The callback to be executed when the API call finishes
@@ -274,6 +279,348 @@ public class DocumentApi {
 
         okhttp3.Call localVarCall = documentGetPreviewValidateBeforeCall(getDocumentPreviewParameters, _callback);
         Type localVarReturnType = new TypeToken<DocumentGetPreviewResponse>(){}.getType();
+        localVarApiClient.executeAsync(localVarCall, localVarReturnType, _callback);
+        return localVarCall;
+    }
+    /**
+     * Build call for documentLoad
+     * @param loadDocumentFromByteArrayParameters A LoadDocumentFromByteArrayParameters object specifying the parameters of the action. (required)
+     * @param _callback Callback for upload/download progress
+     * @return Call to execute
+     * @throws ApiException If fail to serialize the request body object
+     * @http.response.details
+     <table summary="Response Details" border="1">
+        <tr><td> Status Code </td><td> Description </td><td> Response Headers </td></tr>
+        <tr><td> 200 </td><td> Success </td><td>  -  </td></tr>
+     </table>
+     */
+    public okhttp3.Call documentLoadCall(LoadDocumentFromByteArrayParameters loadDocumentFromByteArrayParameters, final ApiCallback _callback) throws ApiException {
+        Object localVarPostBody = loadDocumentFromByteArrayParameters;
+
+        // create path and map variables
+        String localVarPath = "/api/document/DocumentLoad";
+
+        List<Pair> localVarQueryParams = new ArrayList<Pair>();
+        List<Pair> localVarCollectionQueryParams = new ArrayList<Pair>();
+        Map<String, String> localVarHeaderParams = new HashMap<String, String>();
+        Map<String, String> localVarCookieParams = new HashMap<String, String>();
+        Map<String, Object> localVarFormParams = new HashMap<String, Object>();
+        final String[] localVarAccepts = {
+            "text/plain", "application/json", "text/json"
+        };
+        final String localVarAccept = localVarApiClient.selectHeaderAccept(localVarAccepts);
+        if (localVarAccept != null) {
+            localVarHeaderParams.put("Accept", localVarAccept);
+        }
+
+        final String[] localVarContentTypes = {
+            "application/json-patch+json", "application/json", "text/json", "application/_*+json"
+        };
+        final String localVarContentType = localVarApiClient.selectHeaderContentType(localVarContentTypes);
+        localVarHeaderParams.put("Content-Type", localVarContentType);
+
+        String[] localVarAuthNames = new String[] {  };
+        return localVarApiClient.buildCall(localVarPath, "POST", localVarQueryParams, localVarCollectionQueryParams, localVarPostBody, localVarHeaderParams, localVarCookieParams, localVarFormParams, localVarAuthNames, _callback);
+    }
+
+    @SuppressWarnings("rawtypes")
+    private okhttp3.Call documentLoadValidateBeforeCall(LoadDocumentFromByteArrayParameters loadDocumentFromByteArrayParameters, final ApiCallback _callback) throws ApiException {
+        
+        // verify the required parameter 'loadDocumentFromByteArrayParameters' is set
+        if (loadDocumentFromByteArrayParameters == null) {
+            throw new ApiException("Missing the required parameter 'loadDocumentFromByteArrayParameters' when calling documentLoad(Async)");
+        }
+        
+
+        okhttp3.Call localVarCall = documentLoadCall(loadDocumentFromByteArrayParameters, _callback);
+        return localVarCall;
+
+    }
+
+    /**
+     * Loads the provided document file.
+     * 
+     * @param loadDocumentFromByteArrayParameters A LoadDocumentFromByteArrayParameters object specifying the parameters of the action. (required)
+     * @return DocumentLoadResponse
+     * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
+     * @http.response.details
+     <table summary="Response Details" border="1">
+        <tr><td> Status Code </td><td> Description </td><td> Response Headers </td></tr>
+        <tr><td> 200 </td><td> Success </td><td>  -  </td></tr>
+     </table>
+     */
+    public DocumentLoadResponse documentLoad(LoadDocumentFromByteArrayParameters loadDocumentFromByteArrayParameters) throws ApiException {
+        ApiResponse<DocumentLoadResponse> localVarResp = documentLoadWithHttpInfo(loadDocumentFromByteArrayParameters);
+        return localVarResp.getData();
+    }
+
+    /**
+     * Loads the provided document file.
+     * 
+     * @param loadDocumentFromByteArrayParameters A LoadDocumentFromByteArrayParameters object specifying the parameters of the action. (required)
+     * @return ApiResponse&lt;DocumentLoadResponse&gt;
+     * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
+     * @http.response.details
+     <table summary="Response Details" border="1">
+        <tr><td> Status Code </td><td> Description </td><td> Response Headers </td></tr>
+        <tr><td> 200 </td><td> Success </td><td>  -  </td></tr>
+     </table>
+     */
+    public ApiResponse<DocumentLoadResponse> documentLoadWithHttpInfo(LoadDocumentFromByteArrayParameters loadDocumentFromByteArrayParameters) throws ApiException {
+        okhttp3.Call localVarCall = documentLoadValidateBeforeCall(loadDocumentFromByteArrayParameters, null);
+        Type localVarReturnType = new TypeToken<DocumentLoadResponse>(){}.getType();
+        return localVarApiClient.execute(localVarCall, localVarReturnType);
+    }
+
+    /**
+     * Loads the provided document file. (asynchronously)
+     * 
+     * @param loadDocumentFromByteArrayParameters A LoadDocumentFromByteArrayParameters object specifying the parameters of the action. (required)
+     * @param _callback The callback to be executed when the API call finishes
+     * @return The request call
+     * @throws ApiException If fail to process the API call, e.g. serializing the request body object
+     * @http.response.details
+     <table summary="Response Details" border="1">
+        <tr><td> Status Code </td><td> Description </td><td> Response Headers </td></tr>
+        <tr><td> 200 </td><td> Success </td><td>  -  </td></tr>
+     </table>
+     */
+    public okhttp3.Call documentLoadAsync(LoadDocumentFromByteArrayParameters loadDocumentFromByteArrayParameters, final ApiCallback<DocumentLoadResponse> _callback) throws ApiException {
+
+        okhttp3.Call localVarCall = documentLoadValidateBeforeCall(loadDocumentFromByteArrayParameters, _callback);
+        Type localVarReturnType = new TypeToken<DocumentLoadResponse>(){}.getType();
+        localVarApiClient.executeAsync(localVarCall, localVarReturnType, _callback);
+        return localVarCall;
+    }
+    /**
+     * Build call for documentLoadFromURI
+     * @param loadDocumentFromURIParameters A LoadDocumentFromURIParameters object specifying the parameters of the action. (required)
+     * @param _callback Callback for upload/download progress
+     * @return Call to execute
+     * @throws ApiException If fail to serialize the request body object
+     * @http.response.details
+     <table summary="Response Details" border="1">
+        <tr><td> Status Code </td><td> Description </td><td> Response Headers </td></tr>
+        <tr><td> 200 </td><td> Success </td><td>  -  </td></tr>
+     </table>
+     */
+    public okhttp3.Call documentLoadFromURICall(LoadDocumentFromURIParameters loadDocumentFromURIParameters, final ApiCallback _callback) throws ApiException {
+        Object localVarPostBody = loadDocumentFromURIParameters;
+
+        // create path and map variables
+        String localVarPath = "/api/document/DocumentLoadFromURI";
+
+        List<Pair> localVarQueryParams = new ArrayList<Pair>();
+        List<Pair> localVarCollectionQueryParams = new ArrayList<Pair>();
+        Map<String, String> localVarHeaderParams = new HashMap<String, String>();
+        Map<String, String> localVarCookieParams = new HashMap<String, String>();
+        Map<String, Object> localVarFormParams = new HashMap<String, Object>();
+        final String[] localVarAccepts = {
+            "text/plain", "application/json", "text/json"
+        };
+        final String localVarAccept = localVarApiClient.selectHeaderAccept(localVarAccepts);
+        if (localVarAccept != null) {
+            localVarHeaderParams.put("Accept", localVarAccept);
+        }
+
+        final String[] localVarContentTypes = {
+            "application/json-patch+json", "application/json", "text/json", "application/_*+json"
+        };
+        final String localVarContentType = localVarApiClient.selectHeaderContentType(localVarContentTypes);
+        localVarHeaderParams.put("Content-Type", localVarContentType);
+
+        String[] localVarAuthNames = new String[] {  };
+        return localVarApiClient.buildCall(localVarPath, "POST", localVarQueryParams, localVarCollectionQueryParams, localVarPostBody, localVarHeaderParams, localVarCookieParams, localVarFormParams, localVarAuthNames, _callback);
+    }
+
+    @SuppressWarnings("rawtypes")
+    private okhttp3.Call documentLoadFromURIValidateBeforeCall(LoadDocumentFromURIParameters loadDocumentFromURIParameters, final ApiCallback _callback) throws ApiException {
+        
+        // verify the required parameter 'loadDocumentFromURIParameters' is set
+        if (loadDocumentFromURIParameters == null) {
+            throw new ApiException("Missing the required parameter 'loadDocumentFromURIParameters' when calling documentLoadFromURI(Async)");
+        }
+        
+
+        okhttp3.Call localVarCall = documentLoadFromURICall(loadDocumentFromURIParameters, _callback);
+        return localVarCall;
+
+    }
+
+    /**
+     * Loads the provided document file from an URI.
+     * 
+     * @param loadDocumentFromURIParameters A LoadDocumentFromURIParameters object specifying the parameters of the action. (required)
+     * @return DocumentLoadResponse
+     * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
+     * @http.response.details
+     <table summary="Response Details" border="1">
+        <tr><td> Status Code </td><td> Description </td><td> Response Headers </td></tr>
+        <tr><td> 200 </td><td> Success </td><td>  -  </td></tr>
+     </table>
+     */
+    public DocumentLoadResponse documentLoadFromURI(LoadDocumentFromURIParameters loadDocumentFromURIParameters) throws ApiException {
+        ApiResponse<DocumentLoadResponse> localVarResp = documentLoadFromURIWithHttpInfo(loadDocumentFromURIParameters);
+        return localVarResp.getData();
+    }
+
+    /**
+     * Loads the provided document file from an URI.
+     * 
+     * @param loadDocumentFromURIParameters A LoadDocumentFromURIParameters object specifying the parameters of the action. (required)
+     * @return ApiResponse&lt;DocumentLoadResponse&gt;
+     * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
+     * @http.response.details
+     <table summary="Response Details" border="1">
+        <tr><td> Status Code </td><td> Description </td><td> Response Headers </td></tr>
+        <tr><td> 200 </td><td> Success </td><td>  -  </td></tr>
+     </table>
+     */
+    public ApiResponse<DocumentLoadResponse> documentLoadFromURIWithHttpInfo(LoadDocumentFromURIParameters loadDocumentFromURIParameters) throws ApiException {
+        okhttp3.Call localVarCall = documentLoadFromURIValidateBeforeCall(loadDocumentFromURIParameters, null);
+        Type localVarReturnType = new TypeToken<DocumentLoadResponse>(){}.getType();
+        return localVarApiClient.execute(localVarCall, localVarReturnType);
+    }
+
+    /**
+     * Loads the provided document file from an URI. (asynchronously)
+     * 
+     * @param loadDocumentFromURIParameters A LoadDocumentFromURIParameters object specifying the parameters of the action. (required)
+     * @param _callback The callback to be executed when the API call finishes
+     * @return The request call
+     * @throws ApiException If fail to process the API call, e.g. serializing the request body object
+     * @http.response.details
+     <table summary="Response Details" border="1">
+        <tr><td> Status Code </td><td> Description </td><td> Response Headers </td></tr>
+        <tr><td> 200 </td><td> Success </td><td>  -  </td></tr>
+     </table>
+     */
+    public okhttp3.Call documentLoadFromURIAsync(LoadDocumentFromURIParameters loadDocumentFromURIParameters, final ApiCallback<DocumentLoadResponse> _callback) throws ApiException {
+
+        okhttp3.Call localVarCall = documentLoadFromURIValidateBeforeCall(loadDocumentFromURIParameters, _callback);
+        Type localVarReturnType = new TypeToken<DocumentLoadResponse>(){}.getType();
+        localVarApiClient.executeAsync(localVarCall, localVarReturnType, _callback);
+        return localVarCall;
+    }
+    /**
+     * Build call for documentLoadMultipart
+     * @param fileData The data of the document. (required)
+     * @param loadDocumentParameters  (optional)
+     * @param _callback Callback for upload/download progress
+     * @return Call to execute
+     * @throws ApiException If fail to serialize the request body object
+     * @http.response.details
+     <table summary="Response Details" border="1">
+        <tr><td> Status Code </td><td> Description </td><td> Response Headers </td></tr>
+        <tr><td> 200 </td><td> Success </td><td>  -  </td></tr>
+     </table>
+     */
+    public okhttp3.Call documentLoadMultipartCall(File fileData, LoadDocumentParameters loadDocumentParameters, final ApiCallback _callback) throws ApiException {
+        Object localVarPostBody = null;
+
+        // create path and map variables
+        String localVarPath = "/api/document/DocumentLoadMultipart";
+
+        List<Pair> localVarQueryParams = new ArrayList<Pair>();
+        List<Pair> localVarCollectionQueryParams = new ArrayList<Pair>();
+        Map<String, String> localVarHeaderParams = new HashMap<String, String>();
+        Map<String, String> localVarCookieParams = new HashMap<String, String>();
+        Map<String, Object> localVarFormParams = new HashMap<String, Object>();
+        if (fileData != null) {
+            localVarFormParams.put("fileData", fileData);
+        }
+
+        if (loadDocumentParameters != null) {
+            localVarFormParams.put("loadDocumentParameters", loadDocumentParameters);
+        }
+
+        final String[] localVarAccepts = {
+            "text/plain", "application/json", "text/json"
+        };
+        final String localVarAccept = localVarApiClient.selectHeaderAccept(localVarAccepts);
+        if (localVarAccept != null) {
+            localVarHeaderParams.put("Accept", localVarAccept);
+        }
+
+        final String[] localVarContentTypes = {
+            "multipart/form-data"
+        };
+        final String localVarContentType = localVarApiClient.selectHeaderContentType(localVarContentTypes);
+        localVarHeaderParams.put("Content-Type", localVarContentType);
+
+        String[] localVarAuthNames = new String[] {  };
+        return localVarApiClient.buildCall(localVarPath, "POST", localVarQueryParams, localVarCollectionQueryParams, localVarPostBody, localVarHeaderParams, localVarCookieParams, localVarFormParams, localVarAuthNames, _callback);
+    }
+
+    @SuppressWarnings("rawtypes")
+    private okhttp3.Call documentLoadMultipartValidateBeforeCall(File fileData, LoadDocumentParameters loadDocumentParameters, final ApiCallback _callback) throws ApiException {
+        
+        // verify the required parameter 'fileData' is set
+        if (fileData == null) {
+            throw new ApiException("Missing the required parameter 'fileData' when calling documentLoadMultipart(Async)");
+        }
+        
+
+        okhttp3.Call localVarCall = documentLoadMultipartCall(fileData, loadDocumentParameters, _callback);
+        return localVarCall;
+
+    }
+
+    /**
+     * Loads the provided document file using Multipart Upload.
+     * 
+     * @param fileData The data of the document. (required)
+     * @param loadDocumentParameters  (optional)
+     * @return DocumentLoadResponse
+     * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
+     * @http.response.details
+     <table summary="Response Details" border="1">
+        <tr><td> Status Code </td><td> Description </td><td> Response Headers </td></tr>
+        <tr><td> 200 </td><td> Success </td><td>  -  </td></tr>
+     </table>
+     */
+    public DocumentLoadResponse documentLoadMultipart(File fileData, LoadDocumentParameters loadDocumentParameters) throws ApiException {
+        ApiResponse<DocumentLoadResponse> localVarResp = documentLoadMultipartWithHttpInfo(fileData, loadDocumentParameters);
+        return localVarResp.getData();
+    }
+
+    /**
+     * Loads the provided document file using Multipart Upload.
+     * 
+     * @param fileData The data of the document. (required)
+     * @param loadDocumentParameters  (optional)
+     * @return ApiResponse&lt;DocumentLoadResponse&gt;
+     * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
+     * @http.response.details
+     <table summary="Response Details" border="1">
+        <tr><td> Status Code </td><td> Description </td><td> Response Headers </td></tr>
+        <tr><td> 200 </td><td> Success </td><td>  -  </td></tr>
+     </table>
+     */
+    public ApiResponse<DocumentLoadResponse> documentLoadMultipartWithHttpInfo(File fileData, LoadDocumentParameters loadDocumentParameters) throws ApiException {
+        okhttp3.Call localVarCall = documentLoadMultipartValidateBeforeCall(fileData, loadDocumentParameters, null);
+        Type localVarReturnType = new TypeToken<DocumentLoadResponse>(){}.getType();
+        return localVarApiClient.execute(localVarCall, localVarReturnType);
+    }
+
+    /**
+     * Loads the provided document file using Multipart Upload. (asynchronously)
+     * 
+     * @param fileData The data of the document. (required)
+     * @param loadDocumentParameters  (optional)
+     * @param _callback The callback to be executed when the API call finishes
+     * @return The request call
+     * @throws ApiException If fail to process the API call, e.g. serializing the request body object
+     * @http.response.details
+     <table summary="Response Details" border="1">
+        <tr><td> Status Code </td><td> Description </td><td> Response Headers </td></tr>
+        <tr><td> 200 </td><td> Success </td><td>  -  </td></tr>
+     </table>
+     */
+    public okhttp3.Call documentLoadMultipartAsync(File fileData, LoadDocumentParameters loadDocumentParameters, final ApiCallback<DocumentLoadResponse> _callback) throws ApiException {
+
+        okhttp3.Call localVarCall = documentLoadMultipartValidateBeforeCall(fileData, loadDocumentParameters, _callback);
+        Type localVarReturnType = new TypeToken<DocumentLoadResponse>(){}.getType();
         localVarApiClient.executeAsync(localVarCall, localVarReturnType, _callback);
         return localVarCall;
     }
